@@ -210,14 +210,23 @@ export function createNodeElement(
 ): ExcalidrawElement[] {
   const elements: ExcalidrawElement[] = [];
   
+  // Adjust size based on node size setting
+  const sizeMultipliers = {
+    'medium': 1,
+    'L': 1.2,
+    'XL': 1.4,
+    '2XL': 1.6
+  };
+  const actualSize = size * (sizeMultipliers[node.size] || 1);
+  
   // Node circle
   elements.push({
     id: `node-${node.id}`,
     type: 'ellipse',
     x,
     y,
-    width: size,
-    height: size,
+    width: actualSize,
+    height: actualSize,
     angle: 0,
     strokeColor: COLORS.node,
     backgroundColor: node.status === 'running' ? '#10b981' : node.status === 'error' ? '#dc2626' : '#fbbf24',
@@ -239,13 +248,17 @@ export function createNodeElement(
     locked: false,
   } as ExcalidrawElement);
   
-  // Node label
+  // Node label with size indicator
+  const sizeIndicator = node.size !== 'medium' ? ` (${node.size})` : '';
+  const moIndicator = node.memoryOptimized && node.type === 'JCC' ? ' MO' : '';
+  const labelText = `${node.name}${sizeIndicator}${moIndicator}`;
+  
   elements.push({
     id: `label-node-${node.id}`,
     type: 'text',
-    x: x - 20,
-    y: y + size + 5,
-    width: size + 40,
+    x: x - 25,
+    y: y + actualSize + 5,
+    width: actualSize + 50,
     height: 15,
     angle: 0,
     strokeColor: '#000000',
@@ -255,13 +268,13 @@ export function createNodeElement(
     strokeStyle: 'solid',
     roughness: 0,
     opacity: 100,
-    text: node.name,
+    text: labelText,
     fontSize: 12,
     fontFamily: 1,
     textAlign: 'center',
     verticalAlign: 'top',
     containerId: null,
-    originalText: node.name,
+    originalText: labelText,
     autoResize: true,
     lineHeight: 1.25,
     groupIds: [`group-node-${node.id}`],

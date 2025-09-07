@@ -209,6 +209,57 @@
   padding: 4px 0 4px 16px;
   font-size: 13px;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.node-indicators {
+  font-size: 11px;
+  color: #4b5563;
+}
+
+.size-indicator {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.mo-indicator {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.node-controls {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.node-btn {
+  padding: 2px 6px;
+  background: #e5e7eb;
+  color: #4b5563;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  min-width: 20px;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.node-btn:hover {
+  background: #d1d5db;
+}
+
+.node-btn.active {
+  background: #10b981;
+  color: white;
+}
+
+.node-btn.active:hover {
+  background: #059669;
 }
 
 .endpoint-item {

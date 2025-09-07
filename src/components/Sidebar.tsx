@@ -22,6 +22,7 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
     addSnaplex,
     addExecutionNode,
     addEndpoint,
+    updateExecutionNode,
     importState,
     exportState,
     clearAll
@@ -84,7 +85,7 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
     const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
     const nodeCount = snaplex ? snaplex.container.nodes.length + 1 : 1;
     
-    const nodeName = `${nodeType.toLowerCase()}-node-${nodeCount}`;
+    const nodeName = `node-${nodeCount}`;
     
     const newNode: ExecutionNode = {
       id: `node-${Date.now()}`,
@@ -96,7 +97,9 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
       status: 'running',
       cpu: 50,
       memory: 60,
-      diskSpace: 30
+      diskSpace: 30,
+      size: 'medium',
+      memoryOptimized: false
     };
     
     addExecutionNode(envId, snaplexId, newNode);
@@ -139,6 +142,44 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
       importState(json);
     };
     reader.readAsText(file);
+  };
+
+  const handleNodeSizeUp = (envId: string, snaplexId: string, nodeId: string) => {
+    const sizeOrder = ['medium', 'L', 'XL', '2XL'] as const;
+    const env = environments.find(e => e.id === envId);
+    const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
+    const node = snaplex?.container.nodes.find(n => n.id === nodeId);
+    
+    if (node) {
+      const currentIndex = sizeOrder.indexOf(node.size);
+      if (currentIndex < sizeOrder.length - 1) {
+        updateExecutionNode(envId, snaplexId, nodeId, { size: sizeOrder[currentIndex + 1] });
+      }
+    }
+  };
+
+  const handleNodeSizeDown = (envId: string, snaplexId: string, nodeId: string) => {
+    const sizeOrder = ['medium', 'L', 'XL', '2XL'] as const;
+    const env = environments.find(e => e.id === envId);
+    const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
+    const node = snaplex?.container.nodes.find(n => n.id === nodeId);
+    
+    if (node) {
+      const currentIndex = sizeOrder.indexOf(node.size);
+      if (currentIndex > 0) {
+        updateExecutionNode(envId, snaplexId, nodeId, { size: sizeOrder[currentIndex - 1] });
+      }
+    }
+  };
+
+  const handleToggleMO = (envId: string, snaplexId: string, nodeId: string) => {
+    const env = environments.find(e => e.id === envId);
+    const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
+    const node = snaplex?.container.nodes.find(n => n.id === nodeId);
+    
+    if (node && node.type === 'JCC') {
+      updateExecutionNode(envId, snaplexId, nodeId, { memoryOptimized: !node.memoryOptimized });
+    }
   };
   
   return (
@@ -239,7 +280,40 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
                       
                       {snaplex.container.nodes.map(node => (
                         <div key={node.id} className="node-item">
-                          <span>• {node.name} ({node.type})</span>
+                          <span>• {node.name}</span>
+                          <span className="node-indicators">
+                            {node.size !== 'medium' && <span className="size-indicator"> ({node.size})</span>}
+                            {node.memoryOptimized && node.type === 'JCC' && <span className="mo-indicator"> MO</span>}
+                          </span>
+                          <div className="node-controls">
+                            {node.size !== '2XL' && (
+                              <button 
+                                className="node-btn" 
+                                onClick={() => handleNodeSizeUp(env.id, snaplex.id, node.id)}
+                                title="Increase node size"
+                              >
+                                ▲
+                              </button>
+                            )}
+                            {node.size !== 'medium' && (
+                              <button 
+                                className="node-btn" 
+                                onClick={() => handleNodeSizeDown(env.id, snaplex.id, node.id)}
+                                title="Decrease node size"
+                              >
+                                ▼
+                              </button>
+                            )}
+                            {node.type === 'JCC' && (
+                              <button 
+                                className={`node-btn ${node.memoryOptimized ? 'active' : ''}`}
+                                onClick={() => handleToggleMO(env.id, snaplex.id, node.id)}
+                                title="Toggle Memory Optimization"
+                              >
+                                MO
+                              </button>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>

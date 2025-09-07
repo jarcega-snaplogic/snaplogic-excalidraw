@@ -45,6 +45,9 @@ export interface ExecutionNode {
   cpu?: number;
   memory?: number;
   diskSpace?: number;
+  // Node sizing and optimization properties
+  size: 'medium' | 'L' | 'XL' | '2XL';
+  memoryOptimized: boolean; // Only applicable for JCC nodes
 }
 
 export interface APIGateway {
