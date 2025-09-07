@@ -1,0 +1,85 @@
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.excalidraw-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.toggle-sidebar-btn {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 6px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-sidebar-btn:hover {
+  background: #4338ca;
+  padding-right: 8px;
+  box-shadow: 3px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-sidebar-btn.sidebar-open {
+  left: 319px;
+  background: #6b7280;
+  border-radius: 8px 0 0 8px;
+  border-left: 1px solid #e5e7eb;
+}
+
+.toggle-sidebar-btn.sidebar-open:hover {
+  background: #4b5563;
+  padding-left: 8px;
+  padding-right: 6px;
+}
+
+.description-panel {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 400px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  z-index: 100;
+}
+
+.description-panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.description-panel pre {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #4b5563;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
