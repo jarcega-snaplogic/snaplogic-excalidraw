@@ -13,15 +13,22 @@ export function Sidebar({ onClose }: SidebarProps) {
   const [showAddEnvForm, setShowAddEnvForm] = useState(false);
   const [showAddEndpointForm, setShowAddEndpointForm] = useState(false);
   const [showAddSnaplexForm, setShowAddSnaplexForm] = useState<string | null>(null); // Store environment ID
+  const [editingEnv, setEditingEnv] = useState<Environment | null>(null);
+  const [editingSnaplex, setEditingSnaplex] = useState<{snaplex: Snaplex, envId: string} | null>(null);
   
   const {
     environments,
     endpoints,
     addEnvironment,
+    updateEnvironment,
+    removeEnvironment,
     addSnaplex,
+    updateSnaplex,
+    removeSnaplex,
     addExecutionNode,
-    addEndpoint,
     updateExecutionNode,
+    removeExecutionNode,
+    addEndpoint,
     importState,
     exportState,
     clearAll
@@ -180,6 +187,30 @@ export function Sidebar({ onClose }: SidebarProps) {
       updateExecutionNode(envId, snaplexId, nodeId, { memoryOptimized: !node.memoryOptimized });
     }
   };
+
+  const handleDeleteEnvironment = (envId: string) => {
+    const env = environments.find(e => e.id === envId);
+    if (env && confirm(`Delete environment "${env.name}"? This will also delete all snaplexes and nodes within it.`)) {
+      removeEnvironment(envId);
+    }
+  };
+
+  const handleDeleteSnaplex = (envId: string, snaplexId: string) => {
+    const env = environments.find(e => e.id === envId);
+    const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
+    if (snaplex && confirm(`Delete snaplex "${snaplex.name}"? This will also delete all nodes within it.`)) {
+      removeSnaplex(envId, snaplexId);
+    }
+  };
+
+  const handleDeleteNode = (envId: string, snaplexId: string, nodeId: string) => {
+    const env = environments.find(e => e.id === envId);
+    const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
+    const node = snaplex?.container.nodes.find(n => n.id === nodeId);
+    if (node && confirm(`Delete node "${node.name}"?`)) {
+      removeExecutionNode(envId, snaplexId, nodeId);
+    }
+  };
   
   return (
     <div className="sidebar">
@@ -238,7 +269,25 @@ export function Sidebar({ onClose }: SidebarProps) {
             <div className="env-list">
               {environments.map(env => (
                 <div key={env.id} className="env-item">
-                  <h4>{env.name} <span className="env-type">({env.type})</span></h4>
+                  <div className="env-header">
+                    <h4>{env.name} <span className="env-type">({env.type})</span></h4>
+                    <div className="hover-actions">
+                      <button 
+                        className="action-btn"
+                        onClick={() => setEditingEnv(env)}
+                        title="Edit environment"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="action-btn delete"
+                        onClick={() => handleDeleteEnvironment(env.id)}
+                        title="Delete environment"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
                   <p>Region: {env.region}</p>
                   <button 
                     className="mini-btn"
@@ -261,7 +310,25 @@ export function Sidebar({ onClose }: SidebarProps) {
                   
                   {env.snaplexes.map(snaplex => (
                     <div key={snaplex.id} className="snaplex-item">
-                      <h5>{snaplex.name} ({snaplex.type})</h5>
+                      <div className="snaplex-header">
+                        <h5>{snaplex.name} ({snaplex.type})</h5>
+                        <div className="hover-actions">
+                          <button 
+                            className="action-btn"
+                            onClick={() => setEditingSnaplex({snaplex, envId: env.id})}
+                            title="Edit snaplex"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            className="action-btn delete"
+                            onClick={() => handleDeleteSnaplex(env.id, snaplex.id)}
+                            title="Delete snaplex"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
                       <div className="node-buttons">
                         <button 
                           className="mini-btn"
@@ -312,6 +379,15 @@ export function Sidebar({ onClose }: SidebarProps) {
                                 MO
                               </button>
                             )}
+                          </div>
+                          <div className="hover-actions">
+                            <button 
+                              className="action-btn delete"
+                              onClick={() => handleDeleteNode(env.id, snaplex.id, node.id)}
+                              title="Delete node"
+                            >
+                              ×
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -424,6 +500,68 @@ export function Sidebar({ onClose }: SidebarProps) {
         <p>Created by Jean-Claude</p>
         <p className="small">The only one who does real work</p>
       </div>
+
+      {/* Edit Environment Modal */}
+      {editingEnv && (
+        <div className="modal-overlay" onClick={() => setEditingEnv(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Edit Environment</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              updateEnvironment(editingEnv.id, {
+                name: formData.get('name') as string,
+                type: formData.get('type') as 'production' | 'staging' | 'development' | 'sandbox',
+                region: formData.get('region') as string,
+                description: formData.get('description') as string
+              });
+              setEditingEnv(null);
+            }}>
+              <input name="name" defaultValue={editingEnv.name} placeholder="Environment Name" required />
+              <select name="type" defaultValue={editingEnv.type} required>
+                <option value="production">Production</option>
+                <option value="staging">Staging</option>
+                <option value="development">Development</option>
+                <option value="sandbox">Sandbox</option>
+              </select>
+              <input name="region" defaultValue={editingEnv.region} placeholder="Region" />
+              <textarea name="description" defaultValue={editingEnv.description} placeholder="Description" />
+              <div className="modal-buttons">
+                <button type="submit">Save Changes</button>
+                <button type="button" onClick={() => setEditingEnv(null)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Snaplex Modal */}
+      {editingSnaplex && (
+        <div className="modal-overlay" onClick={() => setEditingSnaplex(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Edit Snaplex</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              updateSnaplex(editingSnaplex.envId, editingSnaplex.snaplex.id, {
+                name: formData.get('name') as string,
+                type: formData.get('type') as 'cloudplex' | 'groundplex'
+              });
+              setEditingSnaplex(null);
+            }}>
+              <input name="name" defaultValue={editingSnaplex.snaplex.name} placeholder="Snaplex Name" required />
+              <select name="type" defaultValue={editingSnaplex.snaplex.type} required>
+                <option value="cloudplex">Cloudplex</option>
+                <option value="groundplex">Groundplex</option>
+              </select>
+              <div className="modal-buttons">
+                <button type="submit">Save Changes</button>
+                <button type="button" onClick={() => setEditingSnaplex(null)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

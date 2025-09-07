@@ -1,5 +1,5 @@
 .sidebar {
-  width: 320px;
+  width: 360px;
   height: 100vh;
   background: white;
   border-right: 1px solid #e5e7eb;
@@ -258,8 +258,172 @@
   color: white;
 }
 
+/* Hover Actions */
+.hover-actions {
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.env-item:hover .hover-actions,
+.snaplex-item:hover .hover-actions,
+.node-item:hover .hover-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #6b7280;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.action-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.action-btn.delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Item Containers with Hover */
+.env-item, .snaplex-item, .node-item {
+  position: relative;
+}
+
+.env-header, .snaplex-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.env-header h4, .snaplex-header h5 {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.env-item:hover .env-header .hover-actions,
+.snaplex-item:hover .snaplex-header .hover-actions {
+  opacity: 1;
+}
+
+.node-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.node-item > span:first-child {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .node-btn.active:hover {
   background: #059669;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-content h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #1f2937;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.modal-content textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.modal-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+.modal-buttons button[type="submit"] {
+  background: #3b82f6;
+  color: white;
+}
+
+.modal-buttons button[type="submit"]:hover {
+  background: #2563eb;
+}
+
+.modal-buttons button[type="button"] {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.modal-buttons button[type="button"]:hover {
+  background: #d1d5db;
 }
 
 .endpoint-item {

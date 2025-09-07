@@ -17,6 +17,7 @@ interface ArchitectureStore {
   
   addSnaplex: (envId: string, snaplex: Snaplex) => void;
   updateSnaplex: (envId: string, snaplexId: string, snaplex: Partial<Snaplex>) => void;
+  removeSnaplex: (envId: string, snaplexId: string) => void;
   
   addExecutionNode: (envId: string, snaplexId: string, node: ExecutionNode) => void;
   updateExecutionNode: (envId: string, snaplexId: string, nodeId: string, node: Partial<ExecutionNode>) => void;
@@ -94,6 +95,18 @@ export const useArchitectureStore = create<ArchitectureStore>((set, get) => ({
             snaplexes: env.snaplexes.map(s => 
               s.id === snaplexId ? { ...s, ...updates } : s
             )
+          }
+        : env
+    ),
+    metadata: { ...state.metadata, updatedAt: new Date() }
+  })),
+  
+  removeSnaplex: (envId, snaplexId) => set((state) => ({
+    environments: state.environments.map(env => 
+      env.id === envId 
+        ? {
+            ...env,
+            snaplexes: env.snaplexes.filter(s => s.id !== snaplexId)
           }
         : env
     ),
