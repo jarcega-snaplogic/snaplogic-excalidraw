@@ -60,7 +60,9 @@ export function generateMockEnvironment(): Environment {
               status: 'running',
               cpu: 25,
               memory: 48,
-              diskSpace: 20
+              diskSpace: 20,
+              size: 'medium',
+              memoryOptimized: false
             }
           ],
           apiGateway: {
@@ -108,7 +110,9 @@ export function generateMockEnvironment(): Environment {
               status: 'running',
               cpu: 38,
               memory: 55,
-              diskSpace: 28
+              diskSpace: 28,
+              size: 'medium',
+              memoryOptimized: false
             }
           ],
           minWidth: 300,
@@ -218,7 +222,9 @@ export function createMockJCCNode(name: string, hostname: string, ip: string): E
     status: 'running',
     cpu: Math.floor(Math.random() * 80) + 10,
     memory: Math.floor(Math.random() * 80) + 20,
-    diskSpace: Math.floor(Math.random() * 60) + 10
+    diskSpace: Math.floor(Math.random() * 60) + 10,
+    size: 'medium',
+    memoryOptimized: false
   };
 }
 
@@ -233,7 +239,9 @@ export function createMockFMNode(name: string, hostname: string, ip: string): Ex
     status: 'running',
     cpu: Math.floor(Math.random() * 50) + 10,
     memory: Math.floor(Math.random() * 60) + 20,
-    diskSpace: Math.floor(Math.random() * 40) + 10
+    diskSpace: Math.floor(Math.random() * 40) + 10,
+    size: 'medium',
+    memoryOptimized: false
   };
 }
 

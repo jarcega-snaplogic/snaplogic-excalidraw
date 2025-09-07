@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Excalidraw, MainMenu, WelcomeScreen } from '@excalidraw/excalidraw';
-import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
+import type { ExcalidrawElement } from './types/excalidraw';
 import '@excalidraw/excalidraw/index.css';
 import { useArchitectureStore } from './store/architectureStore';
 import { Sidebar } from './components/Sidebar';
@@ -154,7 +154,6 @@ function App() {
       {showSidebar && (
         <Sidebar 
           onClose={() => setShowSidebar(false)}
-          excalidrawAPI={excalidrawAPI}
         />
       )}
       

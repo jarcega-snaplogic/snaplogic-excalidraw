@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Environment, Endpoint, Connection, ArchitectureMetadata, Snaplex, ExecutionNode, Zone, APIGateway, LoadBalancer, UltraPipeline } from '../types/snaplogic';
+import type { Environment, Endpoint, Connection, ArchitectureMetadata, Snaplex, ExecutionNode, Zone, APIGateway, LoadBalancer, UltraPipeline } from '../types/snaplogic';
 
 interface ArchitectureStore {
   // State

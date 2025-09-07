@@ -1,4 +1,4 @@
-import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
+import type { ExcalidrawElement } from '../types/excalidraw';
 import { libraryManager, SnapLogicShapeType } from '../utils/libraryUtils';
 
 /**

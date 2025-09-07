@@ -1,17 +1,19 @@
-import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
+import type { ExcalidrawElement } from '../types/excalidraw';
 
 // Library shape categories for SnapLogic components
-export enum SnapLogicShapeType {
-  GROUNDPLEX = 'groundplex',
-  CLOUDPLEX = 'cloudplex',
-  JCC_NODE = 'jcc_node',
-  FM_NODE = 'fm_node',
-  API_GATEWAY = 'api_gateway',
-  LOAD_BALANCER = 'load_balancer',
-  ULTRA_PIPELINE = 'ultra_pipeline',
-  ENDPOINT = 'endpoint',
-  ZONE = 'zone'
-}
+export const SnapLogicShapeType = {
+  GROUNDPLEX: 'groundplex',
+  CLOUDPLEX: 'cloudplex',
+  JCC_NODE: 'jcc_node',
+  FM_NODE: 'fm_node',
+  API_GATEWAY: 'api_gateway',
+  LOAD_BALANCER: 'load_balancer',
+  ULTRA_PIPELINE: 'ultra_pipeline',
+  ENDPOINT: 'endpoint',
+  ZONE: 'zone'
+} as const;
+
+export type SnapLogicShapeType = typeof SnapLogicShapeType[keyof typeof SnapLogicShapeType];
 
 // Library item structure matching Excalidraw format
 export interface LibraryItem {

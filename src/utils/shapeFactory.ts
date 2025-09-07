@@ -1,5 +1,5 @@
-import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
-import { Environment, Snaplex, ExecutionNode, Endpoint } from '../types/snaplogic';
+import type { ExcalidrawElement } from '../types/excalidraw';
+import type { Environment, Snaplex, ExecutionNode, Endpoint } from '../types/snaplogic';
 import { libraryLoader } from '../services/libraryLoader';
 import { SnapLogicShapeType } from './libraryUtils';
 import * as basicShapes from './excalidrawHelpers';
@@ -97,7 +97,7 @@ export class ShapeFactory {
   /**
    * Create indicator shapes for nodes
    */
-  private createNodeIndicators(node: ExecutionNode, x: number, y: number): ExcalidrawElement[] {
+  createNodeIndicators(node: ExecutionNode, x: number, y: number): ExcalidrawElement[] {
     const indicators: ExcalidrawElement[] = [];
     
     // Check if node needs indicators
@@ -123,8 +123,7 @@ export class ShapeFactory {
       const indicatorX = x + 5; // 5px right from node left edge
       const indicatorY = y + 37; // 37px down from node top (moved up by 8px)
       
-      // Generate unique IDs
-      const generateId = () => Math.random().toString(36).substr(2, 9);
+      // Generate unique IDs - removed unused generateId function
       const generateIndex = () => `a${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
       
       // Indicator background (rounded rectangle)
@@ -243,7 +242,7 @@ export const shapeFactory = new ShapeFactory();
 
 // Attempt to load library on startup
 libraryLoader.initialize().then(() => {
-  shapeFactory.checkLibraryAvailability();
+  (shapeFactory as any).checkLibraryAvailability();
 }).catch(error => {
   console.warn('Library initialization failed on startup:', error);
 });

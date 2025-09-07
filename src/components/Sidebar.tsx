@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { useArchitectureStore } from '../store/architectureStore';
-import { Environment, Snaplex, ExecutionNode, Endpoint } from '../types/snaplogic';
+import type { Environment, Snaplex, ExecutionNode, Endpoint } from '../types/snaplogic';
 import { generateFullMockArchitecture } from '../utils/mockDataGenerator';
 import './Sidebar.css';
 
 interface SidebarProps {
   onClose: () => void;
-  excalidrawAPI: any;
 }
 
-export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
+export function Sidebar({ onClose }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<'environments' | 'endpoints' | 'import'>('environments');
   const [showAddEnvForm, setShowAddEnvForm] = useState(false);
   const [showAddEndpointForm, setShowAddEndpointForm] = useState(false);

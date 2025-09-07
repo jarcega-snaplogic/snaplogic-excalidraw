@@ -1,5 +1,5 @@
-import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
-import { Environment, Snaplex, ExecutionNode, Endpoint, Connection } from '../types/snaplogic';
+import type { ExcalidrawElement } from '../types/excalidraw';
+import type { Environment, Snaplex, ExecutionNode, Endpoint, Connection } from '../types/snaplogic';
 
 // Color scheme for different component types
 const COLORS = {
@@ -25,8 +25,7 @@ const COLORS = {
   }
 };
 
-// Generate unique IDs
-const generateId = () => Math.random().toString(36).substr(2, 9);
+// Generate unique IDs - removed unused function
 
 // Generate proper fractional index for Excalidraw
 // Using fractional indexing to avoid order key validation errors
@@ -583,7 +582,7 @@ export function autoLayout(environments: Environment[], endpoints: Endpoint[]): 
     let maxX = currentX;
     let maxY = currentY + 80;
     
-    env.snaplexes.forEach((snaplex, sIndex) => {
+    env.snaplexes.forEach((snaplex) => {
       positions.set(`snaplex-${snaplex.id}`, { x: snaplexX, y: snaplexY });
       console.log(`📦 Snaplex "${snaplex.name}" positioned at (${snaplexX}, ${snaplexY}) relative to env at (${currentX}, ${currentY})`);
       
