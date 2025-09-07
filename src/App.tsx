@@ -7,6 +7,7 @@ import { Sidebar } from './components/Sidebar';
 import { 
   createConnectionElement,
   createEnvironmentElement,
+  createSnaplexContainer,
   autoLayout 
 } from './utils/excalidrawHelpers';
 import { shapeFactory } from './utils/shapeFactory';
@@ -39,7 +40,18 @@ function App() {
       env.snaplexes.forEach(snaplex => {
         const sPos = positions.get(`snaplex-${snaplex.id}`) || { x: 100, y: 100 };
         const sDims = envDimensions.get(`snaplex-${snaplex.id}`) || { width: 450, height: 300 };
-        elements.push(...shapeFactory.createSnaplex(snaplex, sPos.x, sPos.y, sDims.width, sDims.height));
+        
+        // Add professional library shape (header) with 30px padding from container edges
+        elements.push(...shapeFactory.createSnaplex(snaplex, sPos.x + 30, sPos.y + 30, sDims.width, sDims.height));
+        
+        // Add dotted scalable container (encompasses entire snaplex area)
+        elements.push(createSnaplexContainer(
+          snaplex, 
+          sPos.x, 
+          sPos.y, // Same Y position as the snaplex header
+          sDims.width, 
+          sDims.height // Full calculated height
+        ));
         
         // Create node elements
         snaplex.container.nodes.forEach(node => {

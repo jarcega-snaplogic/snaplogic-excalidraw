@@ -29,9 +29,16 @@ const COLORS = {
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 // Generate proper fractional index for Excalidraw
+// Using fractional indexing to avoid order key validation errors
 const generateIndex = (() => {
   let counter = 1;
-  return () => `a${counter++}`;
+  return () => {
+    // Generate indices like a1, a1V, a2, a2V, etc to spread them out
+    const base = Math.floor(counter / 2);
+    const suffix = counter % 2 === 0 ? 'V' : '';
+    counter++;
+    return `a${base}${suffix}`;
+  };
 })();
 
 // Create environment container
@@ -354,6 +361,43 @@ export function createEndpointElement(
   return elements;
 }
 
+// Create scalable snaplex container with dotted border
+export function createSnaplexContainer(
+  snaplex: Snaplex,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): ExcalidrawElement {
+  return {
+    id: `container-${snaplex.id}`,
+    type: 'rectangle',
+    x,
+    y,
+    width,
+    height,
+    angle: 0,
+    strokeColor: '#000000', // Black color for better visual contrast
+    backgroundColor: 'transparent',
+    fillStyle: 'hachure',
+    strokeWidth: 2,
+    strokeStyle: 'dashed', // Dotted container
+    roughness: 1,
+    opacity: 100,
+    groupIds: [`group-snaplex-${snaplex.id}`],
+    frameId: null,
+    index: generateIndex() as any,
+    roundness: { type: 3 }, // Rounded corners
+    seed: Math.floor(Math.random() * 2000000000),
+    versionNonce: Math.floor(Math.random() * 2000000000),
+    isDeleted: false,
+    boundElements: null,
+    updated: Date.now(),
+    link: null,
+    locked: false,
+  } as ExcalidrawElement;
+}
+
 // Create connection arrow
 export function createConnectionElement(
   connection: Connection,
@@ -426,6 +470,10 @@ export function autoLayout(environments: Environment[], endpoints: Endpoint[]): 
   const NODE_SPACING = 80;
   const SNAPLEX_MARGIN = 40;
   
+  // Track row heights for proper vertical spacing
+  let rowStartY = currentY;
+  let maxRowHeight = 0;
+  
   // Position environments
   environments.forEach((env, index) => {
     positions.set(`env-${env.id}`, { x: currentX, y: currentY });
@@ -482,16 +530,27 @@ export function autoLayout(environments: Environment[], endpoints: Endpoint[]): 
     const actualHeight = Math.max(ENV_HEIGHT, maxY - currentY + 30);
     envDimensions.set(`env-${env.id}`, { width: actualWidth, height: actualHeight });
     
+    // Track maximum height in this row
+    maxRowHeight = Math.max(maxRowHeight, actualHeight);
+    
     // Move to next environment position using actual width
     currentX += actualWidth + 50;
     if ((index + 1) % 2 === 0) {
+      // End of row - move to next row using maximum height from this row
       currentX = 50;
-      currentY += actualHeight + 100;
+      currentY = rowStartY + maxRowHeight + 100;
+      rowStartY = currentY; // Start tracking next row
+      maxRowHeight = 0; // Reset for next row
     }
   });
   
+  // Handle final row height adjustment if we have an odd number of environments
+  if (environments.length % 2 === 1) {
+    currentY = rowStartY + maxRowHeight + 100;
+  }
+  
   // Position endpoints at the bottom with proper spacing
-  currentY += ENV_HEIGHT + 50;
+  currentY += 50;
   const endpointStartX = 50;
   
   endpoints.forEach((endpoint, index) => {
