@@ -40,7 +40,7 @@ class LibraryLoaderService {
       console.log('🔄 Loading SnapLogic component library...');
       
       // Fetch the library file from public directory
-      const response = await fetch('/snaplogic-library.excalidrawlib');
+      const response = await fetch(`${import.meta.env.BASE_URL}snaplogic-library.excalidrawlib`);
       
       if (!response.ok) {
         throw new Error(`Failed to load library: ${response.statusText}`);
