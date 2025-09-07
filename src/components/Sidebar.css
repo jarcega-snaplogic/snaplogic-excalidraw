@@ -295,6 +295,12 @@
   color: #374151;
 }
 
+.action-btn.delete {
+  color: #dc2626;
+  font-weight: bold;
+  font-size: 16px;
+}
+
 .action-btn.delete:hover {
   background: #fee2e2;
   color: #dc2626;
@@ -424,6 +430,15 @@
 
 .modal-buttons button[type="button"]:hover {
   background: #d1d5db;
+}
+
+.delete-confirm-btn {
+  background: #dc2626 !important;
+  color: white !important;
+}
+
+.delete-confirm-btn:hover {
+  background: #b91c1c !important;
 }
 
 .endpoint-item {

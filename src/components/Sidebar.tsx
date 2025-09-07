@@ -15,6 +15,13 @@ export function Sidebar({ onClose }: SidebarProps) {
   const [showAddSnaplexForm, setShowAddSnaplexForm] = useState<string | null>(null); // Store environment ID
   const [editingEnv, setEditingEnv] = useState<Environment | null>(null);
   const [editingSnaplex, setEditingSnaplex] = useState<{snaplex: Snaplex, envId: string} | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    type: 'environment' | 'snaplex' | 'node';
+    item: any;
+    envId?: string;
+    snaplexId?: string;
+    message: string;
+  } | null>(null);
   
   const {
     environments,
@@ -190,16 +197,25 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   const handleDeleteEnvironment = (envId: string) => {
     const env = environments.find(e => e.id === envId);
-    if (env && confirm(`Delete environment "${env.name}"? This will also delete all snaplexes and nodes within it.`)) {
-      removeEnvironment(envId);
+    if (env) {
+      setConfirmDelete({
+        type: 'environment',
+        item: env,
+        message: `Delete environment "${env.name}"? This will also delete all snaplexes and nodes within it.`
+      });
     }
   };
 
   const handleDeleteSnaplex = (envId: string, snaplexId: string) => {
     const env = environments.find(e => e.id === envId);
     const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
-    if (snaplex && confirm(`Delete snaplex "${snaplex.name}"? This will also delete all nodes within it.`)) {
-      removeSnaplex(envId, snaplexId);
+    if (snaplex) {
+      setConfirmDelete({
+        type: 'snaplex',
+        item: snaplex,
+        envId,
+        message: `Delete snaplex "${snaplex.name}"? This will also delete all nodes within it.`
+      });
     }
   };
 
@@ -207,9 +223,33 @@ export function Sidebar({ onClose }: SidebarProps) {
     const env = environments.find(e => e.id === envId);
     const snaplex = env?.snaplexes.find(s => s.id === snaplexId);
     const node = snaplex?.container.nodes.find(n => n.id === nodeId);
-    if (node && confirm(`Delete node "${node.name}"?`)) {
-      removeExecutionNode(envId, snaplexId, nodeId);
+    if (node) {
+      setConfirmDelete({
+        type: 'node',
+        item: node,
+        envId,
+        snaplexId,
+        message: `Delete node "${node.name}"?`
+      });
     }
+  };
+
+  const handleConfirmDelete = () => {
+    if (!confirmDelete) return;
+    
+    switch (confirmDelete.type) {
+      case 'environment':
+        removeEnvironment(confirmDelete.item.id);
+        break;
+      case 'snaplex':
+        removeSnaplex(confirmDelete.envId!, confirmDelete.item.id);
+        break;
+      case 'node':
+        removeExecutionNode(confirmDelete.envId!, confirmDelete.snaplexId!, confirmDelete.item.id);
+        break;
+    }
+    
+    setConfirmDelete(null);
   };
   
   return (
@@ -284,7 +324,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                         onClick={() => handleDeleteEnvironment(env.id)}
                         title="Delete environment"
                       >
-                        🗑️
+                        ×
                       </button>
                     </div>
                   </div>
@@ -325,7 +365,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                             onClick={() => handleDeleteSnaplex(env.id, snaplex.id)}
                             title="Delete snaplex"
                           >
-                            🗑️
+                            ×
                           </button>
                         </div>
                       </div>
@@ -559,6 +599,31 @@ export function Sidebar({ onClose }: SidebarProps) {
                 <button type="button" onClick={() => setEditingSnaplex(null)}>Cancel</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {confirmDelete && (
+        <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Confirm Delete</h3>
+            <p>{confirmDelete.message}</p>
+            <div className="modal-buttons">
+              <button 
+                type="button" 
+                className="delete-confirm-btn"
+                onClick={handleConfirmDelete}
+              >
+                Delete
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setConfirmDelete(null)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
