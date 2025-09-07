@@ -248,11 +248,96 @@ export function createNodeElement(
     locked: false,
   } as ExcalidrawElement);
   
-  // Node label with size indicator
-  const sizeIndicator = node.size !== 'medium' ? ` (${node.size})` : '';
-  const moIndicator = node.memoryOptimized && node.type === 'JCC' ? ' MO' : '';
-  const labelText = `${node.name}${sizeIndicator}${moIndicator}`;
+  // Create indicator shape if needed
+  const hasIndicator = node.size !== 'medium' || (node.memoryOptimized && node.type === 'JCC');
+  if (hasIndicator) {
+    // Generate indicator text
+    let indicatorText = '';
+    if (node.memoryOptimized && node.type === 'JCC') {
+      if (node.size !== 'medium') {
+        indicatorText = `mo-${node.size}`;
+      } else {
+        indicatorText = 'mo';
+      }
+    } else if (node.size !== 'medium') {
+      indicatorText = node.size;
+    }
+    
+    // Position indicator below and to the right of the node (as per mockups)
+    const indicatorWidth = Math.max(30, indicatorText.length * 8 + 12);
+    const indicatorHeight = 25;
+    const indicatorX = x + 5; // 5px right from node left edge
+    const indicatorY = y + 45; // 45px down from node top
+    
+    // Indicator background (rounded rectangle)
+    elements.push({
+      id: `indicator-bg-${node.id}`,
+      type: 'rectangle',
+      x: indicatorX,
+      y: indicatorY,
+      width: indicatorWidth,
+      height: indicatorHeight,
+      angle: 0,
+      strokeColor: '#e5e7eb',
+      backgroundColor: '#ffffff',
+      fillStyle: 'solid',
+      strokeWidth: 1,
+      strokeStyle: 'solid',
+      roughness: 0,
+      opacity: 100,
+      groupIds: [`group-node-${node.id}`],
+      frameId: null,
+      index: generateIndex() as any,
+      roundness: { type: 3 }, // Rounded corners
+      seed: Math.floor(Math.random() * 2000000000),
+      versionNonce: Math.floor(Math.random() * 2000000000),
+      isDeleted: false,
+      boundElements: null,
+      updated: Date.now(),
+      link: null,
+      locked: false,
+    } as ExcalidrawElement);
+    
+    // Indicator text
+    elements.push({
+      id: `indicator-text-${node.id}`,
+      type: 'text',
+      x: indicatorX + 6, // Padding from left edge
+      y: indicatorY + 6, // Padding from top edge
+      width: indicatorWidth - 12,
+      height: 15,
+      angle: 0,
+      strokeColor: node.memoryOptimized && node.type === 'JCC' ? '#10b981' : '#3b82f6',
+      backgroundColor: 'transparent',
+      fillStyle: 'solid',
+      strokeWidth: 1,
+      strokeStyle: 'solid',
+      roughness: 0,
+      opacity: 100,
+      text: indicatorText,
+      fontSize: 12,
+      fontFamily: 1,
+      textAlign: 'center',
+      verticalAlign: 'middle',
+      containerId: null,
+      originalText: indicatorText,
+      autoResize: false,
+      lineHeight: 1.25,
+      groupIds: [`group-node-${node.id}`],
+      frameId: null,
+      index: generateIndex() as any,
+      roundness: null,
+      seed: Math.floor(Math.random() * 2000000000),
+      versionNonce: Math.floor(Math.random() * 2000000000),
+      isDeleted: false,
+      boundElements: null,
+      updated: Date.now(),
+      link: null,
+      locked: false,
+    } as ExcalidrawElement);
+  }
   
+  // Node label (simplified - no redundant indicators)
   elements.push({
     id: `label-node-${node.id}`,
     type: 'text',
@@ -268,13 +353,13 @@ export function createNodeElement(
     strokeStyle: 'solid',
     roughness: 0,
     opacity: 100,
-    text: labelText,
+    text: node.name,
     fontSize: 12,
     fontFamily: 1,
     textAlign: 'center',
     verticalAlign: 'top',
     containerId: null,
-    originalText: labelText,
+    originalText: node.name,
     autoResize: true,
     lineHeight: 1.25,
     groupIds: [`group-node-${node.id}`],

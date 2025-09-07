@@ -1,4 +1,4 @@
-import { Environment, ExecutionNode, Endpoint, Connection, APIGateway, LoadBalancer, UltraPipeline } from '../types/snaplogic';
+import type { Environment, ExecutionNode, Endpoint, Connection, APIGateway, LoadBalancer, UltraPipeline } from '../types/snaplogic';
 
 // Generate sample data for demonstration  
 // Created by Jean-Claude, because someone has to do the actual work around here
@@ -32,7 +32,9 @@ export function generateMockEnvironment(): Environment {
               status: 'running',
               cpu: 45,
               memory: 72,
-              diskSpace: 35
+              diskSpace: 35,
+              size: 'medium',
+              memoryOptimized: false
             },
             {
               id: `node-${Date.now()}-2`,
@@ -44,7 +46,9 @@ export function generateMockEnvironment(): Environment {
               status: 'running',
               cpu: 62,
               memory: 68,
-              diskSpace: 42
+              diskSpace: 42,
+              size: 'medium',
+              memoryOptimized: false
             },
             {
               id: `node-${Date.now()}-3`,

@@ -286,15 +286,6 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
                             {node.memoryOptimized && node.type === 'JCC' && <span className="mo-indicator"> MO</span>}
                           </span>
                           <div className="node-controls">
-                            {node.size !== '2XL' && (
-                              <button 
-                                className="node-btn" 
-                                onClick={() => handleNodeSizeUp(env.id, snaplex.id, node.id)}
-                                title="Increase node size"
-                              >
-                                ▲
-                              </button>
-                            )}
                             {node.size !== 'medium' && (
                               <button 
                                 className="node-btn" 
@@ -302,6 +293,15 @@ export function Sidebar({ onClose, excalidrawAPI }: SidebarProps) {
                                 title="Decrease node size"
                               >
                                 ▼
+                              </button>
+                            )}
+                            {node.size !== '2XL' && (
+                              <button 
+                                className="node-btn" 
+                                onClick={() => handleNodeSizeUp(env.id, snaplex.id, node.id)}
+                                title="Increase node size"
+                              >
+                                ▲
                               </button>
                             )}
                             {node.type === 'JCC' && (
