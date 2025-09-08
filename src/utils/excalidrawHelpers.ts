@@ -65,11 +65,11 @@ export function createEnvironmentElement(
     strokeWidth: 2,
     strokeStyle: 'solid',
     roughness: 1,
-    opacity: 40,
+    opacity: 20,
     groupIds: [`group-${env.id}`],
     frameId: null,
     index: generateIndex() as any,
-    roundness: { type: 3 },
+    roundness: null,
     seed: Math.floor(Math.random() * 2000000000),
     versionNonce: Math.floor(Math.random() * 2000000000),
     isDeleted: false,
@@ -79,29 +79,32 @@ export function createEnvironmentElement(
     locked: false,
   } as ExcalidrawElement);
   
-  // Environment label
+  // Environment label - with better visibility on colored background
+  const envText = `${env.name} (${env.type})`;
+  const textWidth = Math.max(300, envText.length * 12); // Dynamic width based on text length
+  
   elements.push({
     id: `label-${env.id}`,
     type: 'text',
     x: x + 10,
     y: y + 10,
-    width: 200,
+    width: textWidth,
     height: 25,
     angle: 0,
-    strokeColor: COLORS[env.type] || '#000000',
+    strokeColor: '#000000', // Black text for better visibility
     backgroundColor: 'transparent',
     fillStyle: 'hachure',
     strokeWidth: 1,
     strokeStyle: 'solid',
     roughness: 0,
     opacity: 100,
-    text: `${env.name} (${env.type})`,
+    text: envText,
     fontSize: 20,
     fontFamily: 1,
     textAlign: 'left',
     verticalAlign: 'top',
     containerId: null,
-    originalText: `${env.name} (${env.type})`,
+    originalText: envText,
     autoResize: true,
     lineHeight: 1.25,
     groupIds: [`group-${env.id}`],
@@ -474,11 +477,11 @@ export function createSnaplexContainer(
     width,
     height,
     angle: 0,
-    strokeColor: '#d1d5db', // Light gray border for subtle definition
+    strokeColor: '#000000', // Black dotted border
     backgroundColor: '#ffffff', // White filled background
     fillStyle: 'solid',
-    strokeWidth: 1,
-    strokeStyle: 'solid',
+    strokeWidth: 2,
+    strokeStyle: 'dashed',
     roughness: 1,
     opacity: 100,
     groupIds: [`group-snaplex-${snaplex.id}`],
