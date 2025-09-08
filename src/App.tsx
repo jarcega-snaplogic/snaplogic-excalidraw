@@ -30,21 +30,20 @@ function App() {
     const elements: ExcalidrawElement[] = [];
     const { positions, envDimensions } = autoLayout(environments, endpoints);
     
-    // Create environment elements
+    // Layer 1 (Bottom): Create environment background elements first
     environments.forEach(env => {
       const pos = positions.get(`env-${env.id}`) || { x: 50, y: 50 };
       const dims = envDimensions.get(`env-${env.id}`) || { width: 1200, height: 500 };
       elements.push(...createEnvironmentElement(env, pos.x, pos.y, dims.width, dims.height));
-      
-      // Create snaplex elements
+    });
+    
+    // Layer 2 (Middle): Create snaplex container backgrounds
+    environments.forEach(env => {
       env.snaplexes.forEach(snaplex => {
         const sPos = positions.get(`snaplex-${snaplex.id}`) || { x: 100, y: 100 };
         const sDims = envDimensions.get(`snaplex-${snaplex.id}`) || { width: 450, height: 300 };
         
-        // Add professional library shape (header) with 30px padding from container edges
-        elements.push(...shapeFactory.createSnaplex(snaplex, sPos.x + 30, sPos.y + 30, sDims.width, sDims.height));
-        
-        // Add dotted scalable container (encompasses entire snaplex area)
+        // Add white filled container (middle layer, behind shapes)
         elements.push(createSnaplexContainer(
           snaplex, 
           sPos.x, 
@@ -52,6 +51,17 @@ function App() {
           sDims.width, 
           sDims.height // Full calculated height
         ));
+      });
+    });
+    
+    // Layer 3 (Top): Create snaplex shapes and node elements
+    environments.forEach(env => {
+      env.snaplexes.forEach(snaplex => {
+        const sPos = positions.get(`snaplex-${snaplex.id}`) || { x: 100, y: 100 };
+        const sDims = envDimensions.get(`snaplex-${snaplex.id}`) || { width: 450, height: 300 };
+        
+        // Add professional library shape (header) with 30px padding from container edges
+        elements.push(...shapeFactory.createSnaplex(snaplex, sPos.x + 30, sPos.y + 30, sDims.width, sDims.height));
         
         // Create node elements
         snaplex.container.nodes.forEach(node => {
