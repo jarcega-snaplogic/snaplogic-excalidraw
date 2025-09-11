@@ -54,6 +54,43 @@
   padding-right: 6px;
 }
 
+.documentation-mode-btn {
+  position: fixed;
+  left: 0;
+  top: calc(50% + 80px);
+  transform: translateY(-50%);
+  z-index: 1001;
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.documentation-mode-btn:hover {
+  background: #047857;
+  padding-right: 12px;
+  box-shadow: 3px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.documentation-mode-btn.active {
+  background: #dc2626;
+  left: 0;
+}
+
+.documentation-mode-btn.active:hover {
+  background: #b91c1c;
+}
+
 .description-panel {
   position: absolute;
   bottom: 20px;

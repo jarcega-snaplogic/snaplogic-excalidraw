@@ -480,7 +480,7 @@ export function createSnaplexContainer(
     strokeColor: '#000000', // Black dotted border
     backgroundColor: '#ffffff', // White filled background
     fillStyle: 'solid',
-    strokeWidth: 1,
+    strokeWidth: 0.5, // Thinnest stroke option
     strokeStyle: 'dashed',
     roughness: 1,
     opacity: 100,

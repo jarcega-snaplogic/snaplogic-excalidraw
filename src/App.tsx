@@ -11,11 +11,13 @@ import {
   autoLayout 
 } from './utils/excalidrawHelpers';
 import { shapeFactory } from './utils/shapeFactory';
+import { generateDocumentationElements } from './utils/documentationGenerator';
 import './App.css';
 
 function App() {
   const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [documentationMode, setDocumentationMode] = useState(false);
   
   const { 
     environments, 
@@ -90,8 +92,25 @@ function App() {
       ));
     });
     
+    // Add documentation elements if documentation mode is enabled (after all diagram elements)
+    if (documentationMode) {
+      // Calculate the bottom position of all diagram elements
+      let diagramBottomY = 100; // minimum bottom position
+      elements.forEach(element => {
+        if (element.y && element.height) {
+          diagramBottomY = Math.max(diagramBottomY, element.y + element.height);
+        }
+      });
+      
+      const docElements = generateDocumentationElements(environments, endpoints, connections, diagramBottomY);
+      elements.push(docElements.architectureOverview);
+      elements.push(...docElements.nodeInventoryTable);
+      elements.push(...docElements.environmentDetails);
+      elements.push(...docElements.decisionRecords);
+    }
+    
     return elements;
-  }, [environments, endpoints, connections]);
+  }, [environments, endpoints, connections, documentationMode]);
 
   // Update Excalidraw when data changes
   useEffect(() => {
@@ -175,6 +194,15 @@ function App() {
         >
           {showSidebar ? '◀' : '▶'}
         </button>
+        
+        <button 
+          className={`documentation-mode-btn ${documentationMode ? 'active' : ''}`}
+          onClick={() => setDocumentationMode(!documentationMode)}
+          title={documentationMode ? 'Exit Documentation Mode' : 'Enable Documentation Mode'}
+        >
+          📋
+        </button>
+        
         
         <Excalidraw
           excalidrawAPI={(api: any) => setExcalidrawAPI(api)}

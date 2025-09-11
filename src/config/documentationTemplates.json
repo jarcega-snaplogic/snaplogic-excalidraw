@@ -1,0 +1,708 @@
+{
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "enabled": true,
+      "order": 1,
+      "subsections": [
+        {
+          "id": "overview",
+          "title": "Overview",
+          "template": "This document outlines the approach for modernizing the SnapLogic infrastructure to ensure robust, highly available, and disaster-resilient operations. It presents architectural decisions, business impact analysis, and strategic recommendations for enterprise integration platform deployment.",
+          "fields": []
+        },
+        {
+          "id": "business_objectives",
+          "title": "Business Objectives & Integration Goals",
+          "template": "The modernization effort aims to achieve:",
+          "fields": [
+            "High Availability & Increased Uptime: To make the SnapLogic platform highly available, ensuring uninterrupted service by leveraging a dual-node setup to enhance the uptime of integrations running within the platform.",
+            "Efficient Disaster Recovery: To implement efficient disaster recovery mechanisms that minimize downtime and data loss, thereby safeguarding business continuity.",
+            "Operational Efficiency: [to be defined]",
+            "Data Visibility Enhancement: [to be defined]",
+            "Automation Targets: [to be defined]"
+          ]
+        },
+        {
+          "id": "success_metrics",
+          "title": "Success Metrics & KPIs",
+          "template": "Key performance indicators to measure architectural success:",
+          "fields": [
+            { "key": "uptime_sla", "label": "Uptime SLA Target", "default": "[to be defined]%" },
+            { "key": "throughput_target", "label": "Throughput Target", "default": "[to be defined] messages/sec" },
+            { "key": "cost_optimization", "label": "Cost Optimization Goal", "default": "[to be defined]% reduction" },
+            { "key": "mttr", "label": "Mean Time to Recovery", "default": "[to be defined] minutes" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scope",
+      "title": "Scope Definition",
+      "enabled": true,
+      "order": 2,
+      "template": "The scope of this deliverable sets out the recommended platform architecture for SnapLogic covering the following areas:",
+      "fields": [
+        "Systems Included: [to be defined - list of systems covered by this architecture]",
+        "Processes Covered: [to be defined - business processes integrated]",
+        "Data Flows: [to be defined - types of data flows managed]",
+        "Exclusions: [to be defined - systems or processes explicitly out of scope]",
+        "Multi-Region Deployment: Strategies for deploying SnapLogic across multiple regions for disaster recovery purposes.",
+        "High Availability Solutions: Recommendations for achieving near-zero downtime and seamless failover mechanisms."
+      ]
+    },
+    {
+      "id": "current_state",
+      "title": "Current State Analysis",
+      "enabled": true,
+      "order": 3,
+      "dynamic": true,
+      "diagrams": [
+        {
+          "id": "architecture_overview",
+          "title": "SnapLogic Architecture Overview",
+          "description": "Control Plane vs Data Plane separation showing Designer/Manager/Monitor components and their relationship to Cloudplexes/Groundplexes. This diagram would illustrate the fundamental SnapLogic architecture with clear separation between control and execution layers.",
+          "placement": "after_overview",
+          "dimensions": { "width": 500, "height": 120 }
+        },
+        {
+          "id": "environment_topology",
+          "title": "Environment Network Topology", 
+          "description": "Network topology showing how environments connect, including VPN tunnels, firewalls, load balancers, and data flow paths between different environment types (Dev/Test/Prod). Shows both logical and physical connectivity patterns.",
+          "placement": "after_environment_details",
+          "dimensions": { "width": 500, "height": 110 }
+        },
+        {
+          "id": "node_deployment",
+          "title": "Node Deployment Architecture",
+          "description": "Physical and logical deployment showing node distribution across environments, including geographic locations, sizing rationale (Medium/L/XL/2XL), memory optimization choices, and high-availability pairs. Includes load balancing and failover configurations.",
+          "placement": "after_node_inventory",
+          "dimensions": { "width": 500, "height": 120 }
+        },
+        {
+          "id": "dataflow_patterns",
+          "title": "Enterprise Data Flow Patterns",
+          "description": "Common integration patterns: ETL vs ELT workflows, batch vs streaming processing, point-to-point vs hub-and-spoke architectures. Shows data transformation lifecycle: Extract → Transform → Load with decision trees for pattern selection.",
+          "placement": "after_data_flow_paths",
+          "dimensions": { "width": 550, "height": 130 }
+        }
+      ],
+      "subsections": [
+        {
+          "id": "environment_inventory",
+          "title": "Environment Inventory",
+          "computed": true,
+          "fields": ["environments", "nodes", "endpoints", "connections"]
+        },
+        {
+          "id": "node_inventory",
+          "title": "Node Inventory",
+          "computed": true,
+          "includeTable": true,
+          "tableColumns": [
+            { "key": "name", "label": "Node Name", "width": 20 },
+            { "key": "type", "label": "Type", "width": 8 },
+            { "key": "size", "label": "Size", "width": 8 },
+            { "key": "memoryOptimized", "label": "Memory Opt", "width": 10, "format": "boolean" },
+            { "key": "cpu", "label": "CPU", "width": 8, "default": "[tbd]" },
+            { "key": "memory", "label": "Memory", "width": 8, "default": "[tbd]" },
+            { "key": "os", "label": "OS", "width": 12, "default": "[unknown]" },
+            { "key": "status", "label": "Status", "width": 10 },
+            { "key": "environment", "label": "Environment", "width": 12 }
+          ]
+        },
+        {
+          "id": "network_topology",
+          "title": "Network Topology",
+          "computed": true,
+          "includeTable": true,
+          "tableColumns": [
+            { "key": "name", "label": "Endpoint Name", "width": 25 },
+            { "key": "type", "label": "Type", "width": 15 },
+            { "key": "url", "label": "URL/Address", "width": 30, "default": "[to be completed]" },
+            { "key": "protocol", "label": "Protocol", "width": 10, "default": "[tbd]" },
+            { "key": "port", "label": "Port", "width": 8, "default": "[tbd]" },
+            { "key": "firewall", "label": "Firewall Rules", "width": 12, "default": "[to be defined]" }
+          ]
+        },
+        {
+          "id": "integration_patterns",
+          "title": "Existing Integration Patterns",
+          "template": "Current integration approach analysis:",
+          "fields": [
+            "Point-to-Point Integrations: [to be documented]",
+            "Hub-Spoke Patterns: [to be documented]",
+            "API-Led Connectivity: [to be documented]",
+            "Batch Processing: [to be documented]",
+            "Current Bottlenecks: [to be identified]"
+          ]
+        },
+        {
+          "id": "performance_baseline",
+          "title": "Performance Baseline",
+          "template": "Current system performance metrics:",
+          "fields": [
+            { "key": "avg_throughput", "label": "Average Throughput", "default": "[to be measured] msg/sec" },
+            { "key": "peak_throughput", "label": "Peak Throughput", "default": "[to be measured] msg/sec" },
+            { "key": "avg_latency", "label": "Average Latency", "default": "[to be measured] ms" },
+            { "key": "resource_utilization", "label": "Resource Utilization", "default": "[to be measured]%" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "architecture_overview",
+      "title": "Architecture Overview",
+      "enabled": true,
+      "order": 4,
+      "subsections": [
+        {
+          "id": "deployment_strategy",
+          "title": "Deployment Strategy",
+          "template": "Strategic deployment approach for SnapLogic components:",
+          "fields": [
+            "Cloudplex Placement Rationale: [to be defined - why Cloudplex for specific workloads]",
+            "Groundplex Placement Rationale: [to be defined - on-premises connectivity requirements]",
+            "Hybrid Approach Justification: [to be defined]",
+            "Regional Distribution Strategy: [to be defined]"
+          ]
+        },
+        {
+          "id": "snaplex_distribution",
+          "title": "Snaplex Distribution",
+          "computed": true,
+          "template": "Load balancing and regional placement strategy based on current configuration."
+        },
+        {
+          "id": "data_flow_architecture",
+          "title": "Data Flow Architecture",
+          "template": "End-to-end data flow patterns:",
+          "fields": [
+            "Data Ingestion Patterns: [to be defined]",
+            "Transformation Approach: [to be defined]",
+            "Data Distribution Strategy: [to be defined]",
+            "Error Handling & Retry Logic: [to be defined]"
+          ]
+        },
+        {
+          "id": "security_architecture",
+          "title": "Security Architecture",
+          "template": "Security implementation across the platform:",
+          "fields": [
+            "Encryption Standards: TLS 1.2+ enforced for all communications",
+            "Authentication Methods: [to be defined]",
+            "Network Isolation: [to be defined - VPC, subnets, security groups]",
+            "Key Management: [to be defined]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "infrastructure_specifications",
+      "title": "Infrastructure Specifications",
+      "enabled": true,
+      "order": 5,
+      "diagrams": [
+        {
+          "id": "network_architecture",
+          "title": "Network Architecture & Security Zones",
+          "description": "Comprehensive network topology showing security zones, firewalls, load balancers, VPN connections, and data flow paths. Includes port configurations, DNS resolution patterns, and bandwidth allocation between different environment tiers.",
+          "placement": "after_network_requirements",
+          "dimensions": { "width": 600, "height": 140 }
+        },
+        {
+          "id": "cloud_infrastructure_layout",
+          "title": "Cloud Infrastructure Layout",
+          "description": "Multi-cloud deployment architecture showing AWS/Azure/GCP configurations, including VPCs, subnets, availability zones, storage configurations, and inter-cloud connectivity patterns for hybrid deployments.",
+          "placement": "after_cloud_infrastructure",
+          "dimensions": { "width": 600, "height": 130 }
+        }
+      ],
+      "subsections": [
+        {
+          "id": "node_sizing",
+          "title": "Node Sizing & Capacity Planning",
+          "template": "Detailed infrastructure requirements for optimal performance:",
+          "fields": [
+            { "key": "jcc_specs", "label": "JCC Node Specifications", "default": "[CPU: tbd cores, RAM: tbd GB, Storage: tbd GB]" },
+            { "key": "fm_specs", "label": "FeedMaster Specifications", "default": "[CPU: tbd cores, RAM: tbd GB, Storage: tbd GB]" },
+            { "key": "growth_factor", "label": "Capacity Growth Factor", "default": "[tbd]% annually" },
+            { "key": "scaling_triggers", "label": "Auto-scaling Triggers", "default": "[CPU > tbd%, Memory > tbd%]" }
+          ]
+        },
+        {
+          "id": "network_requirements",
+          "title": "Network Requirements",
+          "template": "Critical network configuration parameters:",
+          "fields": [
+            "Required Ports: 8080 (JCC), 8081 (FeedMaster), 443 (HTTPS)",
+            "DNS Standards: Hostnames without underscores, FQDN resolution required",
+            "S3 Connectivity: HTTPS with TLS to SnapLogic S3 buckets",
+            "Time Synchronization: NTP configuration required across all nodes",
+            "Bandwidth Requirements: [to be calculated based on data volumes]"
+          ]
+        },
+        {
+          "id": "platform_requirements",
+          "title": "Platform Requirements",
+          "template": "Operating system and platform specifications:",
+          "fields": [
+            "Architecture Support: x86 architecture (ARM not supported)",
+            "Operating Systems: [to be specified - Linux distributions, Windows versions]",
+            "Container Support: [to be defined - Docker, Kubernetes versions]",
+            "Java Runtime: [to be specified - JRE version requirements]"
+          ]
+        },
+        {
+          "id": "cloud_infrastructure",
+          "title": "Cloud Infrastructure",
+          "template": "Cloud platform configuration details:",
+          "fields": [
+            "AWS Configuration: [VPC, subnets, security groups, IAM roles - to be defined]",
+            "Azure Configuration: [Resource groups, VNets, NSGs - if applicable]",
+            "GCP Configuration: [Projects, networks, firewall rules - if applicable]",
+            "Storage Requirements: [S3 buckets, blob storage, persistent volumes - to be defined]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ha_dr",
+      "title": "High Availability & Disaster Recovery",
+      "enabled": true,
+      "order": 6,
+      "diagrams": [
+        {
+          "id": "ha_concepts",
+          "title": "High Availability Concepts",
+          "description": "Visual explanation of Active/Passive vs Active/Active deployment models, showing load balancing, health monitoring, and automatic failover processes. Illustrates RTO (Recovery Time Objective) and RPO (Recovery Point Objective) concepts with timeline examples.",
+          "placement": "after_objectives",
+          "dimensions": { "width": 600, "height": 140 }
+        },
+        {
+          "id": "dr_process_flow",
+          "title": "Disaster Recovery Process Flow",
+          "description": "Step-by-step DR workflow showing: Incident Detection → Assessment → Declaration → Activation → Recovery → Fallback. Includes decision points, stakeholder notifications, and business continuity checkpoints with time estimates.",
+          "placement": "after_ha_configuration",
+          "dimensions": { "width": 650, "height": 120 }
+        },
+        {
+          "id": "backup_strategy_321",
+          "title": "3-2-1-1-0 Backup Strategy",
+          "description": "Visual breakdown of modern backup strategy: 3 copies of data, 2 different media types, 1 offsite copy, 1 immutable copy, 0 recovery errors. Shows backup frequency, retention policies, and recovery testing cycles.",
+          "placement": "after_backup_restore",
+          "dimensions": { "width": 580, "height": 150 }
+        }
+      ],
+      "subsections": [
+        {
+          "id": "objectives",
+          "title": "HA/DR Objectives",
+          "template": "The Disaster Recovery (DR) strategy is designed to ensure minimal disruption and swift recovery in the event of a disaster, in alignment with defined objectives:",
+          "fields": [
+            { "key": "rto", "label": "Recovery Time Objective (RTO)", "default": "[to be defined] hours" },
+            { "key": "rpo", "label": "Recovery Point Objective (RPO)", "default": "[to be defined] hours" },
+            { "key": "sla", "label": "Service Level Agreement (SLA)", "default": "[to be defined]% uptime" },
+            { "key": "mtbf", "label": "Mean Time Between Failures", "default": "[to be defined] days" }
+          ]
+        },
+        {
+          "id": "ha_configuration",
+          "title": "High Availability Configuration",
+          "template": "Active-Active and Active-Standby configuration approach:",
+          "fields": [
+            "Primary Region Setup: [to be defined]",
+            "Secondary Region Setup: [to be defined]",
+            "Load Balancer Configuration: Route53 with health checks across regions",
+            "Automatic Failover Triggers: [to be defined - health check failures, response time]",
+            "Data Replication Strategy: [to be defined - synchronous/asynchronous]"
+          ]
+        },
+        {
+          "id": "dr_procedures",
+          "title": "Disaster Recovery Procedures",
+          "template": "Step-by-step recovery processes:",
+          "fields": [
+            "Failure Detection: [monitoring and alerting configuration]",
+            "Failover Initiation: [manual/automatic triggers]",
+            "Pipeline Migration: Mechanisms to change regional execution nodes",
+            "Configuration Recovery: Recovery of config files in failover region",
+            "Validation Steps: [to be defined]",
+            "Failback Procedures: [to be defined]"
+          ]
+        },
+        {
+          "id": "backup_restore",
+          "title": "Backup & Restore Strategy",
+          "template": "Data and configuration backup approach:",
+          "fields": [
+            "Pipeline Asset Backup: [frequency, location, retention]",
+            "Configuration Backup: [method, schedule, storage]",
+            "Restoration Time: [target time for full restoration]",
+            "Testing Schedule: [DR drill frequency and scope]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ultra_tasks",
+      "title": "Ultra Tasks & Pipeline Execution",
+      "enabled": true,
+      "order": 7,
+      "diagrams": [
+        {
+          "id": "pipeline_execution_flow",
+          "title": "Ultra Task Pipeline Execution Flow",
+          "description": "Task orchestration workflow: Pipeline Submission → Queue Management → Resource Allocation → Execution → Result Collection. Shows FeedMaster broker role, task distribution patterns, and performance optimization strategies.",
+          "placement": "after_ultra_architecture",
+          "dimensions": { "width": 620, "height": 140 }
+        },
+        {
+          "id": "ultra_performance_patterns",
+          "title": "Ultra Task Performance Patterns", 
+          "description": "Performance optimization strategies: Parallel execution models, memory management for large datasets, batch size optimization, and task prioritization. Includes throughput vs latency trade-off considerations.",
+          "placement": "after_pipeline_patterns",
+          "dimensions": { "width": 580, "height": 120 }
+        }
+      ],
+      "subsections": [
+        {
+          "id": "ultra_architecture",
+          "title": "Ultra Task Deployment Architecture",
+          "template": "FeedMaster broker configuration for Ultra Tasks:",
+          "fields": [
+            "FeedMaster Configuration: Broker between execution nodes and clients",
+            "Port Requirements: FeedMaster ports on firewall and load balancer",
+            "Queue Management: HTTP to document conversion and distribution",
+            "Low Latency Interface: REST configuration for improved reliability"
+          ]
+        },
+        {
+          "id": "pipeline_patterns",
+          "title": "Pipeline Execution Patterns",
+          "template": "Execution strategies for different workload types:",
+          "fields": [
+            "Triggered Task Configuration: [to be defined]",
+            "Scheduled Task Strategy: Impact during regional failover",
+            "Batch Processing Approach: [to be defined]",
+            "Real-time Processing: [to be defined]",
+            "Error Handling Patterns: [retry logic, dead letter queues]"
+          ]
+        },
+        {
+          "id": "performance_optimization",
+          "title": "Performance Optimization",
+          "template": "Optimization strategies for pipeline execution:",
+          "fields": [
+            "Load Balancing Algorithm: Least-loaded with memory priority",
+            "Resource Allocation: [CPU and memory allocation strategies]",
+            "Pipeline Parallelization: [to be defined]",
+            "Caching Strategy: [to be defined]",
+            "Monitoring & Auto-restart: Automatic pipeline instance monitoring"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security_compliance",
+      "title": "Security & Compliance",
+      "enabled": true,
+      "order": 8,
+      "subsections": [
+        {
+          "id": "data_governance",
+          "title": "Data Governance Policies",
+          "template": "Data quality and governance standards:",
+          "fields": [
+            "Data Validation Rules: [to be defined]",
+            "Data Cleansing Procedures: [to be defined]",
+            "Data Quality Metrics: [to be defined]",
+            "Data Lineage Tracking: [to be defined]",
+            "Data Retention Policies: [to be defined]"
+          ]
+        },
+        {
+          "id": "encryption_standards",
+          "title": "Encryption Standards",
+          "template": "Encryption implementation across the platform:",
+          "fields": [
+            "Transport Encryption: TLS 1.2+ enforced by default",
+            "Data at Rest Encryption: [to be defined]",
+            "Enhanced Account Encryption (EAE): [configuration details]",
+            "Key Rotation Schedule: [to be defined]",
+            "Certificate Management: [to be defined]"
+          ]
+        },
+        {
+          "id": "access_control",
+          "title": "Access Control",
+          "template": "Authentication and authorization framework:",
+          "fields": [
+            "RBAC Configuration: [roles and permissions matrix]",
+            "API Security: [OAuth2, API keys, rate limiting]",
+            "Zero Trust Implementation: [network policies]",
+            "MFA Requirements: [to be defined]",
+            "Service Account Management: [to be defined]"
+          ]
+        },
+        {
+          "id": "compliance_requirements",
+          "title": "Compliance Requirements",
+          "template": "Regulatory and industry compliance:",
+          "fields": [
+            "GDPR Compliance: [data privacy measures]",
+            "HIPAA Requirements: [if applicable]",
+            "SOC 2 Controls: [to be defined]",
+            "Industry-specific Mandates: [to be defined]",
+            "Audit Logging: Change tracking and access monitoring"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dev_ops",
+      "title": "Development & Operations",
+      "enabled": true,
+      "order": 9,
+      "diagrams": [
+        {
+          "id": "cicd_workflow",
+          "title": "CI/CD Pipeline Workflow",
+          "description": "End-to-end development workflow: Code Commit → Build → Test → Deploy → Monitor. Shows environment promotion (DEV→TST→UAT→PROD), automated testing gates, rollback procedures, and deployment approval workflows.",
+          "placement": "after_cicd_integration",
+          "dimensions": { "width": 640, "height": 130 }
+        },
+        {
+          "id": "asset_lifecycle",
+          "title": "Pipeline Asset Lifecycle Management",
+          "description": "Asset management workflow: Development → Version Control → Testing → Deployment → Monitoring → Maintenance. Includes asset versioning, dependency management, and change control processes.",
+          "placement": "after_asset_management",
+          "dimensions": { "width": 560, "height": 110 }
+        }
+      ],
+      "subsections": [
+        {
+          "id": "cicd_integration",
+          "title": "CI/CD Integration",
+          "template": "Continuous integration and deployment strategy:",
+          "fields": [
+            "Git Integration: Workflow configuration across environments",
+            "Build Pipeline: [to be defined]",
+            "Testing Strategy: [unit, integration, performance tests]",
+            "Deployment Automation: [to be defined]",
+            "Environment Promotion: [DEV → TST → UAT → PROD workflow]"
+          ]
+        },
+        {
+          "id": "asset_management",
+          "title": "Asset Management",
+          "template": "Pipeline and component asset organization:",
+          "fields": [
+            "Asset Catalog Structure: [organization hierarchy]",
+            "Metadata Management: Custom metadata and tags",
+            "Version Control Strategy: [branching, tagging]",
+            "Access Controls: Configurable asset permissions",
+            "Deprecation Process: [to be defined]"
+          ]
+        },
+        {
+          "id": "monitoring_observability",
+          "title": "Monitoring & Observability",
+          "template": "System monitoring and performance tracking:",
+          "fields": [
+            "Monitoring Tools: [to be defined - New Relic, DataDog, etc.]",
+            "OpenTelemetry Configuration: Third-party observability setup",
+            "Alerting Rules: [thresholds, escalation]",
+            "Dashboard Configuration: [key metrics visualization]",
+            "Log Aggregation: [centralized logging strategy]"
+          ]
+        },
+        {
+          "id": "troubleshooting",
+          "title": "Troubleshooting Procedures",
+          "template": "Common issues and diagnostic approaches:",
+          "fields": [
+            "Common Error Patterns: [to be documented]",
+            "Diagnostic Tools: [to be defined]",
+            "Escalation Procedures: [support tiers]",
+            "Root Cause Analysis: [methodology]",
+            "Knowledge Base: [documentation location]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "architectural_decisions",
+      "title": "Architectural Decision Records",
+      "enabled": true,
+      "order": 10,
+      "computed": true,
+      "subsections": [
+        {
+          "id": "technology_selection",
+          "title": "Technology Selection Rationale",
+          "template": "Key technology choices and justifications:",
+          "computedFields": [
+            {
+              "condition": "multiEnvironment",
+              "text": "Multi-environment deployment implemented for isolation and testing"
+            },
+            {
+              "condition": "cloudplex",
+              "text": "Cloudplex selected for cloud-native integrations without on-premises dependencies"
+            },
+            {
+              "condition": "groundplex",
+              "text": "Groundplex deployed for secure on-premises system connectivity"
+            },
+            {
+              "condition": "memoryOptimized",
+              "text": "Memory-optimized nodes configured for enhanced performance"
+            },
+            {
+              "condition": "largeNodes",
+              "text": "Large node sizes implemented for high-throughput workloads"
+            }
+          ]
+        },
+        {
+          "id": "scaling_strategy",
+          "title": "Scaling Strategy Decisions",
+          "template": "Approach to system scaling:",
+          "fields": [
+            "Horizontal vs Vertical Scaling: [decision and rationale]",
+            "Auto-scaling Policies: [triggers and limits]",
+            "Cost Optimization Trade-offs: [performance vs cost analysis]",
+            "Regional Expansion Strategy: [to be defined]"
+          ]
+        },
+        {
+          "id": "integration_patterns",
+          "title": "Integration Pattern Choices",
+          "template": "Selected integration approaches:",
+          "fields": [
+            "API-First Strategy: [rationale and implementation]",
+            "Event-Driven Architecture: [use cases and benefits]",
+            "Batch Processing Decisions: [when and why]",
+            "Synchronous vs Asynchronous: [decision criteria]"
+          ]
+        },
+        {
+          "id": "risk_assessment",
+          "title": "Risk Assessment & Mitigation",
+          "template": "Identified risks and mitigation strategies:",
+          "fields": [
+            "Technical Risks: [single points of failure, scalability limits]",
+            "Operational Risks: [skill gaps, process maturity]",
+            "Security Risks: [vulnerabilities, compliance gaps]",
+            "Business Risks: [vendor lock-in, cost overruns]",
+            "Mitigation Strategies: [for each identified risk]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "future_state",
+      "title": "Future State & Roadmap",
+      "enabled": true,
+      "order": 11,
+      "subsections": [
+        {
+          "id": "modernization_strategy",
+          "title": "Modernization Strategy",
+          "template": "Path to modern architecture:",
+          "fields": [
+            "Containerization Plans: [Docker, Kubernetes adoption]",
+            "Cloud-Native Migration: [serverless, managed services]",
+            "Microservices Adoption: [decomposition strategy]",
+            "API Gateway Implementation: [centralized API management]",
+            "Service Mesh Consideration: [if applicable]"
+          ]
+        },
+        {
+          "id": "capacity_growth",
+          "title": "Capacity Growth Plans",
+          "template": "Projected growth and scaling needs:",
+          "fields": [
+            "Volume Projections: [data volume growth estimates]",
+            "User Growth: [concurrent users, API calls]",
+            "Geographic Expansion: [new regions, data residency]",
+            "Performance Requirements: [future latency, throughput needs]",
+            "Resource Expansion Timeline: [planned infrastructure additions]"
+          ]
+        },
+        {
+          "id": "technology_evolution",
+          "title": "Technology Evolution",
+          "template": "Emerging technology adoption:",
+          "fields": [
+            "GenAI Integration: [AI/ML capabilities in pipelines]",
+            "Edge Computing Support: [IoT and edge data processing]",
+            "Real-time Analytics: [streaming analytics implementation]",
+            "Blockchain Integration: [if applicable]",
+            "Quantum-ready Architecture: [future-proofing considerations]"
+          ]
+        },
+        {
+          "id": "skills_development",
+          "title": "Skills Development Requirements",
+          "template": "Team capability enhancement:",
+          "fields": [
+            "Technical Training Needs: [technologies, tools]",
+            "Certification Requirements: [SnapLogic, cloud platforms]",
+            "Operational Prerequisites: [DevOps, SRE skills]",
+            "Knowledge Transfer Plan: [documentation, mentoring]",
+            "Team Structure Evolution: [roles and responsibilities]"
+          ]
+        },
+        {
+          "id": "migration_planning",
+          "title": "Migration Planning",
+          "template": "System migration and modernization approach:",
+          "fields": [
+            "Legacy System Inventory: [systems to be replaced]",
+            "Migration Phases: [timeline and milestones]",
+            "Data Migration Strategy: [ETL, validation]",
+            "Rollback Procedures: [contingency planning]",
+            "Success Criteria: [migration validation metrics]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "recommendations",
+      "title": "Recommendations & Next Steps",
+      "enabled": true,
+      "order": 12,
+      "template": "Based on the current architecture analysis, the following recommendations are proposed:",
+      "fields": [
+        "Immediate Actions: Implement automated failover mechanisms for critical integrations",
+        "Short-term (3 months): Establish monitoring and alerting for all production nodes",
+        "Medium-term (6 months): Document recovery procedures and conduct regular DR drills",
+        "Long-term (12 months): Consider implementing infrastructure as code for consistent deployments",
+        "Continuous Improvement: Review and update network security configurations regularly",
+        "Quick Wins: [to be identified based on analysis]",
+        "Strategic Initiatives: [major transformation projects]"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "2.0",
+    "lastUpdated": "2025-01-09",
+    "author": "SnapLogic Architecture Team",
+    "documentType": "Comprehensive Architecture Documentation Template",
+    "changelog": [
+      {
+        "version": "2.0",
+        "date": "2025-01-09",
+        "changes": "Major restructure with comprehensive enterprise sections including executive summary, detailed infrastructure specs, security compliance, dev ops, and future state planning"
+      },
+      {
+        "version": "1.0",
+        "date": "2025-09-08",
+        "changes": "Initial version with basic sections"
+      }
+    ]
+  }
+}
